@@ -11,10 +11,18 @@ const Camera = () => {
     takePicture = async () => {
       if (cameraRef) {
         const options = { quality: 0.5, base64: true };
-        const data = await this.camera.takePictureAsync(options);
+        const data = await cameraRef.takePictureAsync(options);
         console.log(data.uri);
       }
     };
+
+    const flipCamera = () => {
+      if(camType === RNCamera.Constants.Type.back){
+        setCamType(RNCamera.Constants.Type.on)
+      } else {
+        setCamType(RNCamera.Constants.Type.off)
+      }
+    }
     return (
       <View style={styles.container}>
         <RNCamera
