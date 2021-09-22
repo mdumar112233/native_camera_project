@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import 'react-native-gesture-handler';
 import { RNCamera } from 'react-native-camera';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
- const Camera = () => {
+ const Camera = (props) => {
   let cameraRef = useRef(null);
   const [camType,  setCamType] = useState(RNCamera.Constants.Type.back);
   const [flash, setFlash] = useState(RNCamera.Constants.FlashMode.off);
@@ -13,6 +15,9 @@ import { RNCamera } from 'react-native-camera';
         const options = { quality: 0.5, base64: true };
         const data = await cameraRef.current.takePictureAsync(options);
         console.log(data.uri);
+        props.navigation.navigate('Home', {
+          uri: data.uri
+        })
       }
     };
 
@@ -92,12 +97,28 @@ const styles = StyleSheet.create({
   },
 });
 
-// export default function App() {
-//   return (
-//     <View>
-//       <Text>App</Text>
-//     </View>
-//   )
-// }
+function HomeScreen({route}) {
+  return(
+    <View>
+      <Image style={{width: 100, height: 100}}
+        source={{uri: route.params.uri}}
+      />
+    </View>
+  )
+}
 
-export default Camera;
+
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Camera" component={Camera} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default App;
